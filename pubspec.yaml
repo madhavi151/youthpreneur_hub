@@ -1,0 +1,31 @@
+name: Youthpreneur_Hub
+description: A Flutter app
+
+publish_to: 'none' # Remove this line if publishing to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.18.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  supabase_flutter: ^1.2.0   # Supabase Flutter package for authentication and database
+  google_fonts: ^3.0.1        # Google Fonts for text styling
+  shared_preferences: ^2.0.15
+  provider: ^6.1.2  # For state management (if needed)
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0            # For localization (if required)
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+flutter:
+  uses-material-design: true
+
+
