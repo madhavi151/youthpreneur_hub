@@ -1,3 +1,4 @@
+import 'package:Youthpreneur_Hub/screens/service_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -82,7 +83,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
+            /*Text(
               'Hello, ${userEmail ?? "User"}!',
               style: const TextStyle(
                 fontSize: 21,
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.black,
               ),
               textAlign: TextAlign.center,
-            ),
+            ),*/
 
             // Display selected section based on navigation bar
             Expanded(
@@ -102,19 +103,19 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.business),
+            label: 'Business',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+            icon: Icon(Icons.handshake),
+            label: 'Service',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.shopping_cart_sharp),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
+            icon: Icon(Icons.account_box_rounded),
             label: 'Profile',
           ),
         ],
@@ -132,7 +133,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return HomeSectionPage();
       case 1:
-        return SearchSectionPage();
+        return ServicesPage();
       case 2:
         return CartSectionPage();
       case 3:

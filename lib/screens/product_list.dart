@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 
 import '../datamodel/product_data_model.dart';
 import 'product_details.dart';
