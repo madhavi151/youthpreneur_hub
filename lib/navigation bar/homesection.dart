@@ -15,14 +15,6 @@ class HomeSectionPage extends StatelessWidget {
           flex: 1,
           child: BusinessScreen(),
         ),
-
-        // ServicesPage is scrollable below the BusinessScreen
-        Flexible(
-          flex: 1, // You can adjust flex if you want to give more space to ServicesPage
-          child: SingleChildScrollView(
-            child: ServicesPage(),
-          ),
-        ),
       ],
     );
   }

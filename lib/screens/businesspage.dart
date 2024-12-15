@@ -22,6 +22,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100], // Light grey background for clean look
       body: StreamBuilder<List<BusinessTable>>(
         stream: BusinessTable.fetchBusinessesStream(),
         builder: (context, snapshot) {
@@ -31,117 +32,120 @@ class _BusinessScreenState extends State<BusinessScreen> {
 
           final businesses = snapshot.data!;
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0), // Add padding around the content
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Businesses',
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Title
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Text(
+                  'Explore Businesses',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 250, // Fixed height for the horizontal list
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal, // Horizontal scrolling
-                    itemCount: businesses.length,
-                    itemBuilder: (context, index) {
-                      final business = businesses[index];
+              ),
+              // Business List
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  itemCount: businesses.length,
+                  itemBuilder: (context, index) {
+                    final business = businesses[index];
 
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>ProductList(
-                                business: business.business_name ?? '',
-                                image: business.image!,
-                                description: business.description!,
-                                email: business.email!,
-                                contact: business.contact!,
-                                address: business.address!,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductList(
+                              business: business.business_name ?? '',
+                              image: business.image!,
+                              description: business.description!,
+                              email: business.email!,
+                              contact: business.contact!,
+                              address: business.address!,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Stack(
+                          alignment: Alignment.bottomLeft,
+                          children: [
+                            // Background Image
+                            Container(
+                              height: 150, // Reduced image height
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(business.image ?? ''),
+                                  fit: BoxFit.cover,
+                                  onError: (_, __) =>
+                                  const AssetImage('assets/no_image.png'),
+                                ),
                               ),
                             ),
-                          );
-                        },
-                        child: Card(
-                          elevation: 8.0, // Card elevation
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          margin: const EdgeInsets.only(right: 16.0), // Add spacing between cards
-                          child: Container(
-                            width: 180, // Same fixed width for all cards
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.0),
-                              color: Colors.white, // Card background color
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Business Image
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(16.0),
-                                  ),
-                                  child: business.image != null
-                                      ? Image.network(
-                                    business.image!,
-                                    height: 150, // Fixed image height
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.broken_image, size: 80),
-                                  )
-                                      : const Icon(Icons.business, size: 80),
+                            // Gradient Overlay for readability
+                            Container(
+                              height: 150,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.black.withOpacity(0.5),
+                                    Colors.transparent,
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
                                 ),
-                                const SizedBox(height: 8),
-                                // Business Name
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
+                              ),
+                            ),
+                            // Business Details
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
                                     business.business_name ?? 'Business Name',
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
+                                      color: Colors.white,
                                     ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    business.description ?? 'No description available',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white70,
+                                    ),
+                                    maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                // Business Description
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
-                                    business.description ?? 'No description available.',
-                                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
     );
-
-
-
   }
 }
