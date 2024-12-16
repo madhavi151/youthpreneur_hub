@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 
 import '../datamodel/product_data_model.dart';
+import '../services/ttsservice.dart';
 import 'product_details.dart';
 
 class ProductList extends StatefulWidget {
@@ -89,6 +90,11 @@ class _ProductListState extends State<ProductList> {
                     widget.description,
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
+                  const SizedBox(height: 10),
+
+                  IconButton(onPressed: () {
+                    TtsService.customSpeak(widget.description);
+                  }, icon: Icon(Icons.volume_down_alt)),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -213,6 +219,7 @@ class _ProductListState extends State<ProductList> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     const SizedBox(height: 4),
+
                                     Text(
                                       '₹${product.price}',
                                       style: const TextStyle(

@@ -1,11 +1,14 @@
+import 'package:Youthpreneur_Hub/services/ttsservice.dart';
+import 'package:Youthpreneur_Hub/widgets/customspeak.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; // Supabase SDK
 import 'package:Youthpreneur_Hub/screens/signinpage.dart';
 import 'package:Youthpreneur_Hub/screens/homepage.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await TtsService.init();
   try {
     // Initialize Supabase
     await Supabase.initialize(
@@ -32,6 +35,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const SplashScreen(),
+      ///home: tts(),
     );
   }
 }

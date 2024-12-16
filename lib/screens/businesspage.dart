@@ -23,6 +23,27 @@ class _BusinessScreenState extends State<BusinessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100], // Light grey background for clean look
+      appBar: AppBar(
+        title: const Text(
+          'Explore Businesses',
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 25,
+            color: Colors.white, // Set the title color to white for contrast
+             // Added letter-spacing for modern look
+          ),
+        ),
+        elevation: 20,
+        backgroundColor: Colors.teal[700],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+          ),
+        ), // No shadow for a clean look
+      ),
+
+
       body: StreamBuilder<List<BusinessTable>>(
         stream: BusinessTable.fetchBusinessesStream(),
         builder: (context, snapshot) {
@@ -35,18 +56,6 @@ class _BusinessScreenState extends State<BusinessScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Title
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Text(
-                  'Explore Businesses',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
               // Business List
               Expanded(
                 child: ListView.builder(
@@ -125,6 +134,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
                                   const SizedBox(height: 4),
                                   Text(
                                     business.description ?? 'No description available',
+
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.white70,
@@ -132,6 +142,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
+
                                 ],
                               ),
                             ),
@@ -147,5 +158,6 @@ class _BusinessScreenState extends State<BusinessScreen> {
         },
       ),
     );
+
   }
 }

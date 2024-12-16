@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../datamodel/cart_data_model.dart';
 import '../datamodel/review_data_model.dart';
+import 'package:Youthpreneur_Hub/services/ttsservice.dart';
 
 class ProductDetail extends StatefulWidget {
   final int product_id;
@@ -121,23 +122,36 @@ class _ProductDetailState extends State<ProductDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(widget.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         centerTitle: true,
         backgroundColor: Colors.teal,
-        elevation: 0,
+        elevation: 2,
+        shadowColor: Colors.grey[300],
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Colors.grey[200],
+          color: Colors.grey[100],
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Product Image
               Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(8),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(15),
                   child: Image.network(
                     widget.image,
                     height: 300,
@@ -148,47 +162,66 @@ class _ProductDetailState extends State<ProductDetail> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              // Product Info Section
+              // Product Details
               Container(
-                color: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       widget.name,
                       style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                          fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       "₹${widget.price}",
                       style: const TextStyle(
-                        fontSize: 24,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          fontSize: 28, fontWeight: FontWeight.bold, color: Colors.green),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Text(
                       widget.description,
-                      style: const TextStyle(fontSize: 16, color: Colors.black54),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                        height: 1.5,
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    // Add/Remove to Cart Button
+                    const SizedBox(height: 20),
+                    // Add to Cart Button
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
+                        icon: Icon(
+                          _isInCart == true ? Icons.remove_shopping_cart : Icons.add_shopping_cart,
+                          color: Colors.white,
+                        ),
+                        label: Text(
+                          _isInCart == null
+                              ? "Loading..."
+                              : _isInCart!
+                              ? "Remove from Cart"
+                              : "Add to Cart",
+                          style: const TextStyle(fontSize: 18),
+                        ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _isInCart == true ? Colors.redAccent : Colors.green,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor:
+                          _isInCart == true ? Colors.redAccent : Colors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                              borderRadius: BorderRadius.circular(10)),
                         ),
                         onPressed: () async {
                           if (_isInCart == true) {
@@ -198,202 +231,153 @@ class _ProductDetailState extends State<ProductDetail> {
                           }
                           _checkProductInCart();
                         },
-                        child: Text(
-                          _isInCart == null
-                              ? "Loading..."
-                              : _isInCart!
-                              ? "Remove from Cart"
-                              : "Add to Cart",
-                          style: const TextStyle(fontSize: 18, color: Colors.white),
-                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-
-              /// Reviews section
-
-      const SizedBox(height: 20),
-      const Text(
-        "Customer Reviews",
-        style: TextStyle(
-          fontWeight: FontWeight.w900,
-          fontSize: 20,
-          color: Colors.black87,
-        ),
-      ),
-      const SizedBox(height: 10),
-// Reviews Section
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3), // Shadow position
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: StreamBuilder<List<ReviewDataModel>>(
-            stream: ReviewDataModel.fetchReviews(widget.product_id),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'No reviews yet.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                );
-              }
-              final reviews = snapshot.data!;
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: reviews.length,
-                itemBuilder: (context, index) {
-                  final review = reviews[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 20),
+              // Reviews Section
+              Text(
+                "Customer Reviews",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            review.user_id ?? 'Anonymous',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                  ],
+                ),
+                child: StreamBuilder<List<ReviewDataModel>>(
+                  stream: ReviewDataModel.fetchReviews(widget.product_id),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No reviews yet.',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      );
+                    }
+                    final reviews = snapshot.data!;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: reviews.length,
+                      itemBuilder: (context, index) {
+                        final review = reviews[index];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.black!),
                           ),
-                          const SizedBox(height: 5),
-                          Text(
-                            review.review ?? '',
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Rating:",
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
+                              Row(
+                                children: [
+                                  Icon(Icons.person, color: Colors.grey[600]),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    review.user_id ?? 'Anonymous',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 5),
+                              const SizedBox(height: 8),
                               Text(
-                                '${review.rating}',
-                                style: const TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                review.review ?? '',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  const Text("Rating: ",
+                                      style: TextStyle(color: Colors.grey)),
+                                  Icon(Icons.star,
+                                      color: Colors.orange, size: 16),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${review.rating}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ),
-      const SizedBox(height: 20),
-// Write Review Section
-      const Text(
-        "Write a Review",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-          color: Colors.black87,
-        ),
-      ),
-      const SizedBox(height: 10),
-      TextField(
-        controller: _reviewController,
-        maxLines: 3,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.grey[100],
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.grey),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.green),
-          ),
-          hintText: 'Write your review here...',
-          hintStyle: const TextStyle(color: Colors.grey),
-        ),
-      ),
-      const SizedBox(height: 10),
-// Rating Dropdown
-      Row(
-        children: [
-          const Text(
-            "Rating:",
-            style: TextStyle(fontSize: 16),
-          ),
-          const SizedBox(width: 10),
-          DropdownButton<double>(
-            value: _rating,
-            onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  _rating = value;
-                });
-              }
-            },
-            items: List.generate(5, (index) => index + 1)
-                .map(
-                  (value) => DropdownMenuItem(
-                value: value.toDouble(),
-                child: Text(
-                  value.toString(),
-                  style: const TextStyle(fontSize: 16),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
-            )
-                .toList(),
+              const SizedBox(height: 20),
+              // Write a Review
+              Text(
+                "Write a Review",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _reviewController,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "Write your review...",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.green),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Submit Review Button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: Colors.teal,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: _submitReview,
+                child: const Text("Submit Review",
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
+              ),
+            ],
           ),
-        ],
-      ),
-      const SizedBox(height: 10),
-      ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-          backgroundColor: Colors.green,
-         disabledBackgroundColor: Colors.white,
         ),
-        onPressed: _submitReview,
-        child: const Text(
-          "Submit Review",
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
-
-    ]
-          ),
-    ),
       ),
     );
+
   }
 
   @override

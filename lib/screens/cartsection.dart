@@ -13,8 +13,9 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   double _totalPrice = 0.0;
   late String email;
-  bool _isCOD = false; // Move this to the state class
+  bool _isCOD = false;
   bool cart = false;
+
   @override
   void initState() {
     super.initState();
@@ -47,44 +48,25 @@ class _CartScreenState extends State<CartScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            // Use StatefulBuilder to update local dialog state
             return AlertDialog(
               title: const Text('Order Details'),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
+                    _buildTextField(_nameController, 'Name'),
                     const SizedBox(height: 10),
-                    TextField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
+                    _buildTextField(_emailController, 'Email'),
                     const SizedBox(height: 10),
-                    TextField(
-                      controller: _phoneController,
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number',
-                        border: OutlineInputBorder(),
-                      ),
+                    _buildTextField(
+                      _phoneController,
+                      'Phone Number',
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 10),
-                    TextField(
-                      controller: _addressController,
-                      decoration: const InputDecoration(
-                        labelText: 'Address',
-                        border: OutlineInputBorder(),
-                      ),
+                    _buildTextField(
+                      _addressController,
+                      'Address',
                       maxLines: 2,
                     ),
                     const SizedBox(height: 10),
@@ -99,7 +81,7 @@ class _CartScreenState extends State<CartScreen> {
                           value: _isCOD,
                           onChanged: (value) {
                             setDialogState(() {
-                              _isCOD = value ?? false; // Update local state
+                              _isCOD = value ?? false;
                             });
                           },
                         ),
@@ -110,9 +92,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
+                  onPressed: () => Navigator.of(context).pop(),
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
@@ -124,10 +104,9 @@ class _CartScreenState extends State<CartScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please fill all the fields!')),
                       );
-                      return; // Exit early if validation fails
+                      return;
                     }
 
-                    // Fetch cart items and validate
                     final cartItems = await CartDataModel.fetchCartItems(email).first;
                     if (cartItems.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -136,7 +115,6 @@ class _CartScreenState extends State<CartScreen> {
                       return;
                     }
 
-                    // Place orders for each cart item
                     for (final item in cartItems) {
                       final newOrder = OrderDataModel(
                         customer_name: _nameController.text,
@@ -153,16 +131,15 @@ class _CartScreenState extends State<CartScreen> {
                       await OrderDataModel.createOrder(newOrder);
                       await CartDataModel.removeFromCart(item.product_id!);
                     }
-                     setState(() {
-                      cart=false;
+
+                    setState(() {
+                      cart = false;
                     });
 
-                    Navigator.of(context).pop(); // Close the dialog after order placement
+                    Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Order placed successfully!')),
                     );
-
-                    // Refresh UI to reflect changes
                   },
                   child: const Text('Confirm Order'),
                 ),
@@ -171,6 +148,23 @@ class _CartScreenState extends State<CartScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildTextField(
+      TextEditingController controller,
+      String label, {
+        TextInputType keyboardType = TextInputType.text,
+        int maxLines = 1,
+      }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+      ),
+      keyboardType: keyboardType,
+      maxLines: maxLines,
     );
   }
 
@@ -195,10 +189,21 @@ class _CartScreenState extends State<CartScreen> {
             }
 
             if (!snapshot.hasData || snapshot.data == null || snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text(
-                  'Your cart is empty!',
-                  style: TextStyle(fontSize: 18, color: Colors.black54),
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.shopping_cart_outlined,
+                      size: 100,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Your cart is empty!',
+                      style: TextStyle(fontSize: 18, color: Colors.black54),
+                    ),
+                  ],
                 ),
               );
             }
@@ -221,13 +226,13 @@ class _CartScreenState extends State<CartScreen> {
                             borderRadius: BorderRadius.circular(8.0),
                             child: item.image != null
                                 ? Image.network(
-                                    item.image!,
-                                    height: 50,
-                                    width: 50,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        const Icon(Icons.broken_image),
-                                  )
+                              item.image!,
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image),
+                            )
                                 : const Icon(Icons.shopping_cart),
                           ),
                           title: Text(
@@ -246,8 +251,8 @@ class _CartScreenState extends State<CartScreen> {
                             onPressed: () async {
                               await CartDataModel.removeFromCart(item.product_id!);
                               setState(() {
-                                cart=true;
-                              }); // Refresh the cart
+                                cart = true;
+                              });
                             },
                           ),
                         ),
@@ -266,7 +271,6 @@ class _CartScreenState extends State<CartScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-
                           const Text(
                             'Total (Ex. of Delivery Charges):',
                             style: TextStyle(

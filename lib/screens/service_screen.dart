@@ -16,11 +16,22 @@ class _ServicesPageState extends State<ServicesPage> {
       appBar: AppBar(
         title: const Text(
           'S E R V I C E S',
-          style: TextStyle(letterSpacing: 2.0),
+          style: TextStyle(
+            letterSpacing: 2.0,
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
-        elevation: 5,
-        backgroundColor: Colors.teal,
+        elevation: 2,
+        backgroundColor: Colors.teal[700],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
+          ),
+        ),
       ),
       body: StreamBuilder<List<ServicesDataModel>>(
         stream: ServicesDataModel.fetchServicesStream(),
@@ -33,14 +44,18 @@ class _ServicesPageState extends State<ServicesPage> {
             return const Center(
               child: Text(
                 'No services available.',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             );
           }
 
           final services = snapshot.data!;
           return ListView.builder(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
             itemCount: services.length,
             itemBuilder: (context, index) {
               final service = services[index];
@@ -54,26 +69,31 @@ class _ServicesPageState extends State<ServicesPage> {
                   );
                 },
                 child: Card(
-                  elevation: 50,
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  elevation: 8,
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
+                  shadowColor: Colors.black.withOpacity(0.1),
+                  color: Colors.white,
                   child: ListTile(
-                    contentPadding: const EdgeInsets.all(12.0),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                     title: Text(
                       service.service_name ?? 'No Name',
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
                       ),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
                         service.description ?? 'No Description',
-                        style:
-                        const TextStyle(fontSize: 14, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -87,14 +107,18 @@ class _ServicesPageState extends State<ServicesPage> {
                         height: 60,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.broken_image,
-                            size: 60, color: Colors.grey),
+                        const Icon(Icons.broken_image, size: 60, color: Colors.grey),
                       ),
                     )
                         : const Icon(
                       Icons.business,
                       size: 60,
                       color: Colors.teal,
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 18,
+                      color: Colors.teal[700],
                     ),
                   ),
                 ),
@@ -104,6 +128,7 @@ class _ServicesPageState extends State<ServicesPage> {
         },
       ),
     );
+
   }
 }
 
