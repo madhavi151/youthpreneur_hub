@@ -138,6 +138,8 @@ class _HomePageState extends State<HomePage> {
         return CartSectionPage();
       case 3:
         return ProfileSectionPage();
+        case 4:
+      return ProfileSectionPage();
       default:
         return HomeSectionPage();
     }
