@@ -173,6 +173,7 @@ class _ProductListState extends State<ProductList> {
                                 description: product.description ?? '',
                                 image: product.image ?? '',
                                 name: product.product_name ?? 'Unknown',
+                                business_name: widget.business,
                               ),
                             ),
                           );

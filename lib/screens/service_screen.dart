@@ -54,7 +54,7 @@ class _ServicesPageState extends State<ServicesPage> {
                   );
                 },
                 child: Card(
-                  elevation: 4,
+                  elevation: 50,
                   margin: const EdgeInsets.symmetric(vertical: 8.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),

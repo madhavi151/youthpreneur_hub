@@ -1,5 +1,6 @@
 import 'package:Youthpreneur_Hub/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../datamodel/cart_data_model.dart';
 import '../datamodel/review_data_model.dart';
 
@@ -9,6 +10,7 @@ class ProductDetail extends StatefulWidget {
   final String name;
   final String description;
   final int price;
+  final String business_name;
 
   const ProductDetail({
     super.key,
@@ -17,6 +19,7 @@ class ProductDetail extends StatefulWidget {
     required this.image,
     required this.name,
     required this.price,
+    required this.business_name
   });
 
   @override
@@ -32,8 +35,22 @@ class _ProductDetailState extends State<ProductDetail> {
   void initState() {
     super.initState();
     _checkProductInCart();
+    _loadUserData();
   }
+  late String email;
+  Future<void> _loadUserData() async {
 
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session != null) {
+      final user = session.user;
+      email = user.email ?? 'No email';
+
+    } else {
+      email = 'No email';
+
+    }
+    setState(() {});
+  }
   Future<void> _checkProductInCart() async {
     try {
       bool result = await CartDataModel.isProductInCart(widget.product_id, 'kevin');
@@ -52,7 +69,8 @@ class _ProductDetailState extends State<ProductDetail> {
           product_name: widget.name,
           price: widget.price,
           image: widget.image,
-          user_id: 'kevin'
+          user_id: email,
+          business_name: widget.business_name,
       ));
       setState(() {
         _isInCart = true; // Update state after adding
@@ -88,7 +106,8 @@ class _ProductDetailState extends State<ProductDetail> {
             product_id: widget.product_id,
             review: _reviewController.text,
             rating: _rating.toString(),
-            user_id: '',
+            user_id: email,
+
         ),
       );
       _reviewController.clear(); // Clear the input field after submission

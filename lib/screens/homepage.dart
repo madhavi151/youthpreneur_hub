@@ -1,11 +1,11 @@
+import 'package:Youthpreneur_Hub/screens/cartsection.dart';
 import 'package:Youthpreneur_Hub/screens/service_screen.dart';
+import 'package:Youthpreneur_Hub/screens/workshop_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:Youthpreneur_Hub/screens/signinpage.dart';
 import 'package:Youthpreneur_Hub/navigation bar/homesection.dart';
-import 'package:Youthpreneur_Hub/navigation bar/searchsection.dart';
-import 'package:Youthpreneur_Hub/navigation bar/cartsection.dart';
 import 'package:Youthpreneur_Hub/navigation bar/profilesection.dart';
 
 class HomePage extends StatefulWidget {
@@ -115,6 +115,10 @@ class _HomePageState extends State<HomePage> {
             label: 'Cart',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.work_history_outlined),
+            label: 'Workshop',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.account_box_rounded),
             label: 'Profile',
           ),
@@ -135,11 +139,11 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return ServicesPage();
       case 2:
-        return CartSectionPage();
+        return CartScreen();
       case 3:
-        return ProfileSectionPage();
+        return WorkShopPage();
         case 4:
-      return ProfileSectionPage();
+        return ProfileSectionPage();
       default:
         return HomeSectionPage();
     }

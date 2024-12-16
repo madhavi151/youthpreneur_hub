@@ -266,8 +266,9 @@ class _CartScreenState extends State<CartScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+
                           const Text(
-                            'Total (Exclusive of Delivery Charges):',
+                            'Total (Ex. of Delivery Charges):',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

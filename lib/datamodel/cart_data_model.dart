@@ -6,6 +6,7 @@ class CartDataModel {
   final String? user_id;
   final int? product_id;
   final String? image;
+  final String? business_name;
 
   CartDataModel({
     this.product_id,
@@ -13,6 +14,7 @@ class CartDataModel {
     this.price,
     this.user_id,
     this.image,
+    this.business_name
   });
 
   // Factory constructor to create an instance from a Map
@@ -22,7 +24,8 @@ class CartDataModel {
         product_name: data['product'],
         price: data['price'],
         user_id: data['user_id'],
-        image: data['image']
+        image: data['image'],
+        business_name: data['business_name']
     );
   }
 
@@ -34,6 +37,7 @@ class CartDataModel {
       'price': price,
       'user_id': user_id,
       'image':image,
+      'business_name':business_name
     };
   }
   // Check if a specific product is in the cart
